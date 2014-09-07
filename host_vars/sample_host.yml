@@ -1,0 +1,11 @@
+---
+
+# host_vars/sample=host.yml
+
+base_data_dir: /path/to/data-dir
+bdr_bin: /path/to/postgres-bdr/bin
+bdr_replica_src: 5597
+bdr_ports:
+  - 5597
+  - 5598
+  - 5599

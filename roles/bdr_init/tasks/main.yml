@@ -1,0 +1,42 @@
+---
+# roles/bdr/tasks/main.yml
+
+- name: Create data directories
+  file: dest={{base_data_dir}}/BDR{{item}} state=directory mode=0700
+  with_items: bdr_ports
+
+- name: Perform initdb
+  shell: "{{bdr_bin}}/initdb --data-checksums {{base_data_dir}}/BDR{{item}}"
+  args:
+    creates: "{{base_data_dir}}/BDR{{item}}/postgresql.conf"
+  with_items: bdr_ports
+
+- name: Install pg_hba.conf
+  template: src=pg_hba.conf.j2 dest={{base_data_dir}}/BDR{{item}}/pg_hba.conf
+  with_items: bdr_ports
+
+- name: Install postgresql.local.conf
+  template: src=postgresql.local.conf.j2 dest={{base_data_dir}}/BDR{{item}}/postgresql.local.conf
+  with_items: bdr_ports
+
+- name: Ensure postgresql.local.conf is loaded
+  lineinfile: dest="{{base_data_dir}}/BDR{{item}}/postgresql.conf" line="include 'postgresql.local.conf'" state=present
+  with_items: bdr_ports
+
+- include: bdr_db_start.yml
+
+- name: Create databases
+  postgresql_db: login_host=localhost port={{item}} login_user={{db_superuser}} name=bdrdemo state=present
+  with_items: bdr_ports
+
+- include: bdr_db_stop.yml
+
+- name: Install postgresql.bdr.conf
+  template: src=postgresql.bdr.conf.j2 dest={{base_data_dir}}/BDR{{item}}/postgresql.bdr.conf
+  with_items: bdr_ports
+
+- name: Include postgresql.bdr.conf from postgresql.conf
+  lineinfile: dest="{{base_data_dir}}/BDR{{item}}/postgresql.conf" line="include 'postgresql.bdr.conf'" state=present
+  with_items: bdr_ports
+
+- include: bdr_db_start.yml

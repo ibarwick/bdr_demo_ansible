@@ -1,0 +1,44 @@
+# roles/bdr/templates/postgresql.bdr.conf.j2
+#
+# See: http://wiki.postgresql.org/wiki/BDR_Quick_Start#Enable_the_BDR_extension
+
+# Generic settings required for BDR
+#----------------------------------
+
+# Allow two other peer nodes, plus one for init_replica
+max_replication_slots = 3
+
+# Two peer nodes, plus two slots for pg_basebackup
+max_wal_senders = 4
+
+# Record data for logical replication
+wal_level = 'logical'
+track_commit_timestamp = on
+
+# Load BDR
+shared_preload_libraries = 'bdr'
+
+# Make sure there are enough background worker slots for BDR to run
+max_worker_processes = 10
+
+# These aren't required, but are useful for diagnosing problems
+#log_error_verbosity = verbose
+#log_min_messages = debug1
+#log_line_prefix = 'd=%d p=%p a=%a%q '
+
+
+# BDR connection configuration
+#-----------------------------
+
+bdr.connections = '{% set c=0 %}{% for port in bdr_ports %}{% if port != item %}{% if c > 0 %},{% endif %}{% set c=c+1 %}bdr{{port}}{% endif %}{% endfor %}'
+
+{% for port in bdr_ports %}
+{% if port != item %}
+bdr.bdr{{port}}_dsn = 'dbname={{db_name}} user={{db_superuser}} port={{port}}'
+{% endif %}
+{% endfor %}
+
+{% if item != bdr_replica_src %}
+bdr.bdr{{bdr_replica_src}}_init_replica = on
+bdr.bdr{{bdr_replica_src}}_replica_local_dsn = 'dbname={{db_name}} user={{db_superuser}} port={{item}}'
+{% endif %}

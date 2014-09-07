@@ -1,0 +1,4 @@
+---
+# roles/bdr_stop/tasks/main.yml
+
+- include: bdr_db_stop.yml

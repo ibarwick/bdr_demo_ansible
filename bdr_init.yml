@@ -1,0 +1,13 @@
+---
+
+# bdr_init.yml
+
+- hosts: all
+  gather_facts: false
+  user: barwick
+  sudo: false
+  roles:
+    - bdr_init
+
+
+

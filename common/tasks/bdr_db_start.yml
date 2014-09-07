@@ -1,0 +1,9 @@
+---
+
+# bdr_db_start.yml
+
+- name: Start servers
+  shell: "{{bdr_bin}}/pg_ctl -D {{base_data_dir}}/BDR{{item}} -l {{bdr_log_dir}}/bdr{{item}}.log -w start"
+  args:
+    creates: "{{base_data_dir}}/BDR{{item}}/postmaster.pid"
+  with_items: bdr_ports
