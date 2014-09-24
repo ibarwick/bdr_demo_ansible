@@ -1,0 +1,4 @@
+---
+# roles/bdr_start/tasks/main.yml
+
+- include: bdr_db_start.yml
