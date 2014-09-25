@@ -21,6 +21,11 @@ shared_preload_libraries = 'bdr'
 # Make sure there are enough background worker slots for BDR to run
 max_worker_processes = {{bdr_ports|count}}
 
+{% if server_version_num.stdout >= "90500" -%}
+# Set a unique name for the cluster (9.5 and later)
+cluster_name=bdr{{item}}
+{% endif %}
+
 # These aren't required, but are useful for diagnosing problems
 #log_error_verbosity = verbose
 #log_min_messages = debug1

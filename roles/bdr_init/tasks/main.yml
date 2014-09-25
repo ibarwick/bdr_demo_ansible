@@ -29,6 +29,12 @@
   postgresql_db: login_host=localhost port={{item}} login_user={{db_superuser}} name=bdrdemo state=present
   with_items: bdr_ports
 
+  # Server version number is used to set version-specific parameters in the
+  # configuration files
+- name: Extract server version number
+  shell: "{{bdr_bin}}/psql -A -q -t -U {{db_superuser}} -d {{db_name}} -p {{bdr_ports[0]}} -c 'SHOW SERVER_VERSION_NUM'"
+  register: server_version_num
+
 - include: bdr_db_stop.yml
 
 - name: Install postgresql.bdr.conf
