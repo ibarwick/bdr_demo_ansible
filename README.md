@@ -26,10 +26,15 @@ with the following variables (default values in parentheses):
 - `base_data_dir`: arbitrary directory for each BDR instance's data files
 - `bdr_log_dir` (`tmp`): directory for BDR PostgreSQL log files
 - `bdr_ports`: list of ports for BDR PostgreSQL instances
-- `bdr_replica_src`: port number of the initial BDR PostgreSQL instance, from which the other instances will replicate from (if in doubt, just use the first entry in `bdr_ports`).
+- `bdr_replica_src`: port number of the initial BDR PostgreSQL instance,
+  from which the other instances will replicate from (if in doubt, just
+  use the first entry in `bdr_ports`).
 
 Add `your_hostname` to the `[bdr_hosts]` section of `hosts.ini`
 
+MacPorts users: if Ansible complains about `psycopg2` being missing, it is
+probably using the OS X native Python interpreter; set `ansible_python_interpreter`
+to point to the MacPorts version.
 
 Operation
 ---------
