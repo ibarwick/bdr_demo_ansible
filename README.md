@@ -59,7 +59,7 @@ Operation
     nara                       : ok=12   changed=11   unreachable=0    failed=0
 
 
-    $PG_BDR/psql -p 5597 bdrdemo
+    $ /path/to/pg_bdr/bin/psql -p 5597 bdrdemo
     psql (9.4beta2)
     Type "help" for help.
 
@@ -73,7 +73,8 @@ Operation
     COMMENT
     Time: 28.503 ms
     bdrdemo=# \q
-    nara:ansible barwick$ $PG_BDR/psql -p 5598 bdrdemo
+
+    $ /path/to/pg_bdr/bin/psql -p 5598 bdrdemo
     psql (9.4beta2)
     Type "help" for help.
 
