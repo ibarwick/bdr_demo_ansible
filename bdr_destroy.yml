@@ -1,6 +1,9 @@
+---
+
+# bdr_destroy.yml
+
 - hosts: all
   gather_facts: false
-  user: barwick
   sudo: false
   roles:
     - bdr_destroy

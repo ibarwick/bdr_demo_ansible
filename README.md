@@ -32,6 +32,9 @@ with the following variables (default values in parentheses):
 
 Add `your_hostname` to the `[bdr_hosts]` section of `hosts.ini`
 
+The file `host_vars/sample_host.yml` provides a useful template containing the
+parameters which will probably need to be configured.
+
 MacPorts users: if Ansible complains about `psycopg2` being missing, it is
 probably using the OS X native Python interpreter; set `ansible_python_interpreter`
 to point to the MacPorts version.
