@@ -55,13 +55,16 @@ Operation
 
     (...)
 
-    TASK: [bdr_init | Start servers] **********************************************
-    changed: [nara] => (item=5597)
-    changed: [nara] => (item=5598)
-    changed: [nara] => (item=5599)
+    TASK: [bdr_init | Create BDR group] *******************************************
+    changed: [osaka]
+
+    TASK: [bdr_init | Add other nodes to group] ***********************************
+    skipping: [osaka] => (item=5597)
+    changed: [osaka] => (item=5598)
+    changed: [osaka] => (item=5599)
 
     PLAY RECAP ********************************************************************
-    nara                       : ok=12   changed=11   unreachable=0    failed=0
+    osaka                      : ok=15   changed=13   unreachable=0    failed=0
 
 
     $ /path/to/pg_bdr/bin/psql -p 5597 bdrdemo
