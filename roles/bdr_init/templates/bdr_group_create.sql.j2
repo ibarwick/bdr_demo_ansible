@@ -6,7 +6,7 @@ DO LANGUAGE plpgsql $$
     IF NOT node_exists THEN
       PERFORM bdr.bdr_group_create(
         local_node_name := 'node{{bdr_ports[0]}}',
-        node_external_dsn := 'port={{bdr_ports[0]}} dbname=bdrdemo'
+        node_external_dsn := 'port={{bdr_ports[0]}} dbname={{db_name}}'
       );
     END IF;
   END;

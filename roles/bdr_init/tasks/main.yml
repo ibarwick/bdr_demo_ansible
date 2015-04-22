@@ -23,20 +23,6 @@
   lineinfile: dest="{{base_data_dir}}/BDR{{item}}/postgresql.conf" line="include 'postgresql.local.conf'" state=present
   with_items: bdr_ports
 
-- include: bdr_db_start.yml
-
-- name: Create databases
-  postgresql_db: login_host=localhost port={{item}} login_user={{db_superuser}} name=bdrdemo state=present
-  with_items: bdr_ports
-
-  # Server version number is used to set version-specific parameters in the
-  # configuration files
-- name: Extract server version number
-  shell: "{{bdr_bin}}/psql -A -q -t -U {{db_superuser}} -d {{db_name}} -p {{bdr_ports[0]}} -c 'SHOW SERVER_VERSION_NUM'"
-  register: server_version_num
-
-- include: bdr_db_stop.yml
-
 - name: Install postgresql.bdr.conf
   template: src=postgresql.bdr.conf.j2 dest={{base_data_dir}}/BDR{{item}}/postgresql.bdr.conf
   with_items: bdr_ports
@@ -46,3 +32,36 @@
   with_items: bdr_ports
 
 - include: bdr_db_start.yml
+
+- name: Create databases
+  postgresql_db: login_host=localhost port={{item}} login_user={{db_superuser}} name={{db_name}} state=present
+  with_items: bdr_ports
+
+  # Server version number is used to set version-specific parameters in the
+  # configuration files
+  # (NOTE: not currently used anywhere)
+- name: Extract server version number
+  shell: "{{bdr_bin}}/psql -A -q -t -U {{db_superuser}} -d {{db_name}} -p {{bdr_ports[0]}} -c 'SHOW SERVER_VERSION_NUM'"
+  register: server_version_num
+
+- name: Create required extensions
+  shell: "{{bdr_bin}}/psql -U {{db_superuser}} -d {{db_name}} -p {{item[0]}} -c 'CREATE EXTENSION IF NOT EXISTS {{item[1]}}'"
+  with_nested:
+    - bdr_ports
+    - [ 'btree_gist', 'bdr' ]
+
+- name: Generate SQL to create BDR group
+  template: src=bdr_group_create.sql.j2 dest=/tmp/bdr_group_create.sql
+
+- name: Generate SQL to add other nodes
+  template: src=bdr_group_join.sql.j2 dest=/tmp/bdr_group_join.{{item}}.sql
+  with_items: bdr_ports
+  when: item != bdr_ports[0]
+
+- name: Create BDR group
+  shell: "{{bdr_bin}}/psql -U {{db_superuser}} -d {{db_name}} -p {{bdr_ports[0]}} -f /tmp/bdr_group_create.sql"
+
+- name: Add other nodes to group
+  shell: "{{bdr_bin}}/psql -U {{db_superuser}} -d {{db_name}} -p {{item}} -f /tmp/bdr_group_join.{{item}}.sql"
+  with_items: bdr_ports
+  when: item != bdr_ports[0]
