@@ -1,0 +1,6 @@
+
+SELECT bdr.bdr_group_join(
+      local_node_name := 'node{{item}}',
+      node_external_dsn := 'port={{item}} dbname=bdrdemo',
+      join_using_dsn := 'port={{bdr_ports[0]}} dbname=bdrdemo'
+);
