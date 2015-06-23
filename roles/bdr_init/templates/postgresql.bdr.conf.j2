@@ -21,8 +21,8 @@ shared_preload_libraries = 'bdr'
 # Make sure there are enough background worker slots for BDR to run
 max_worker_processes = {{bdr_ports|count + 1}}
 
-# These aren't required, but are useful for diagnosing problems
-#log_error_verbosity = verbose
-#log_min_messages = debug1
-#log_line_prefix = 'd=%d p=%p a=%a%q '
+# Set up debugging output
+log_error_verbosity = verbose
+log_min_messages = debug1
+log_line_prefix = 'd=%d p=%p a=%a%q '
 
