@@ -5,11 +5,14 @@
 # Generic settings required for BDR
 #----------------------------------
 
-# Allow two other peer nodes, plus one for init_replica
-max_replication_slots = {{bdr_ports|count + 1}}
+# Allow at least {{bdr_ports|count}} other peer nodes, plus one for init_replica
+# (we'll actually create an additional {{extra_connections}} in case we want to
+# add more nodes manually)
+max_replication_slots = {{bdr_ports|count + 1 + extra_connections}}
 
-# Two peer nodes, plus two slots for pg_basebackup
-max_wal_senders = {{bdr_ports|count + 2}}
+# {{bdr_ports|count}} peer nodes, plus two slots for pg_basebackup, and {{extra_connections}}
+# additional connections
+max_wal_senders = {{bdr_ports|count + 2 + extra_connections}}
 
 # Record data for logical replication
 wal_level = 'logical'
@@ -19,7 +22,7 @@ track_commit_timestamp = on
 shared_preload_libraries = 'bdr'
 
 # Make sure there are enough background worker slots for BDR to run
-max_worker_processes = {{bdr_ports|count + 1}}
+max_worker_processes = {{bdr_ports|count + 1 + extra_connections}}
 
 # Set up debugging output
 log_error_verbosity = verbose
