@@ -1,0 +1,10 @@
+---
+
+# udr_init.yml
+
+- hosts: all
+  gather_facts: false
+  sudo: false
+  roles:
+    - udr_init
+

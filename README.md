@@ -2,7 +2,7 @@ bdr_demo_ansible
 ================
 
 This repository contains a set of Ansible playbooks to easily
-create a simple BDR test set-up with two or more nodes running
+create a simple BDR or UDR test set-up with two or more nodes running
 on localhost.
 
 
@@ -16,8 +16,8 @@ Requirements
   see the above link for details on how to do this.
 
 
-Configuration
--------------
+BDR Configuration
+-----------------
 
 Create a file `your_hostname.yml` in the `host_vars` directory
 with the following variables (default values in parentheses):
@@ -26,7 +26,7 @@ with the following variables (default values in parentheses):
 - `db_name` (`bdrdemo`)
 - `bdr_bin`: path to the BDR PostgreSQL `bin/` directory
 - `base_data_dir`: arbitrary directory for each BDR instance's data files
-- `bdr_log_dir` (`tmp`): directory for BDR PostgreSQL log files
+- `base_log_dir` (`/tmp`): directory for BDR/UDR PostgreSQL log files
 - `bdr_ports`: list of ports for BDR PostgreSQL instances
 - `bdr_replica_src`: port number of the initial BDR PostgreSQL instance,
   from which the other instances will replicate from (if in doubt, just
@@ -41,8 +41,8 @@ MacPorts users: if Ansible complains about `psycopg2` being missing, it is
 probably using the OS X native Python interpreter; set `ansible_python_interpreter`
 to point to the MacPorts version.
 
-Operation
----------
+BDR Operation
+-------------
 
     $ ansible-playbook -i hosts.ini bdr_init.yml
 
@@ -93,6 +93,28 @@ Operation
      public | foo  | table | barwick | 0 bytes | Created on 5597
     (1 row)
 
+
+UDR Configuration
+-----------------
+
+UDR setup is essentially the same as BDR setup.
+
+Create a file `your_hostname_udr.yml` in the `host_vars` directory
+with the following variables (default values in parentheses):
+
+- `db_superuser` (`postgres`)
+- `db_name` (`bdrdemo`)
+- `bdr_bin`: path to the UDR PostgreSQL `bin/` directory
+- `base_data_dir`: arbitrary directory for each BDR instance's data files
+- `base_log_dir` (`/tmp`): directory for BDR/UDR PostgreSQL log files
+- `udr_ports`: list of ports for UDR PostgreSQL instances
+- `udr_replica_src`: port number of the initial UDR PostgreSQL instance,
+  from which the other instances will replicate from (if in doubt, just
+  use the first entry in `udr_ports`).
+
+*Currently only the servers will be set up (with appropriate configuration
+and extensions installed); the actual UDR configuration must be done
+manually*
 
 
 Playbooks

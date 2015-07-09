@@ -1,0 +1,67 @@
+---
+# roles/udr_init/tasks/main.yml
+
+- name: Create data directories
+  file: dest={{base_data_dir}}/UDR{{item}} state=directory mode=0700
+  with_items: udr_ports
+
+- name: Perform initdb
+  shell: "{{udr_bin}}/initdb --data-checksums {{base_data_dir}}/UDR{{item}}"
+  args:
+    creates: "{{base_data_dir}}/UDR{{item}}/postgresql.conf"
+  with_items: udr_ports
+
+- name: Install pg_hba.conf
+  template: src=pg_hba.conf.j2 dest={{base_data_dir}}/UDR{{item}}/pg_hba.conf
+  with_items: udr_ports
+
+- name: Install postgresql.local.conf
+  template: src=postgresql.local.conf.j2 dest={{base_data_dir}}/UDR{{item}}/postgresql.local.conf
+  with_items: udr_ports
+
+- name: Ensure postgresql.local.conf is loaded
+  lineinfile: dest="{{base_data_dir}}/UDR{{item}}/postgresql.conf" line="include 'postgresql.local.conf'" state=present
+  with_items: udr_ports
+
+- name: Install postgresql.udr.conf
+  template: src=postgresql.udr.conf.j2 dest={{base_data_dir}}/UDR{{item}}/postgresql.udr.conf
+  with_items: udr_ports
+
+- name: Include postgresql.udr.conf from postgresql.conf
+  lineinfile: dest="{{base_data_dir}}/UDR{{item}}/postgresql.conf" line="include 'postgresql.udr.conf'" state=present
+  with_items: udr_ports
+
+- include: udr_db_start.yml
+
+- name: Create databases
+  postgresql_db: login_host=localhost port={{item}} login_user={{db_superuser}} name={{db_name}} state=present
+  with_items: udr_ports
+
+  # Server version number is used to set version-specific parameters in the
+  # configuration files
+  # (NOTE: not currently used anywhere)
+- name: Extract server version number
+  shell: "{{udr_bin}}/psql -A -q -t -U {{db_superuser}} -d {{db_name}} -h localhost -p {{udr_ports[0]}} -c 'SHOW SERVER_VERSION_NUM'"
+  register: server_version_num
+
+- name: Create required extensions
+  shell: "{{udr_bin}}/psql -U {{db_superuser}} -d {{db_name}} -p {{item[0]}} -c 'CREATE EXTENSION IF NOT EXISTS {{item[1]}}'"
+  with_nested:
+    - udr_ports
+    - [ 'btree_gist', 'bdr' ]
+
+# - name: Generate SQL to create UDR group
+#   template: src=udr_group_create.sql.j2 dest=/tmp/udr_group_create.sql
+
+# - name: Generate SQL to add other nodes
+#   template: src=udr_group_join.sql.j2 dest=/tmp/udr_group_join.{{item}}.sql
+#   with_items: udr_ports
+#   when: item != udr_ports[0]
+
+# - name: Create UDR group
+#   shell: "{{udr_bin}}/psql -U {{db_superuser}} -d {{db_name}} -p {{udr_ports[0]}} -f /tmp/udr_group_create.sql"
+
+# - name: Add other nodes to group
+#   shell: "{{udr_bin}}/psql -U {{db_superuser}} -d {{db_name}} -p {{item}} -f /tmp/udr_group_join.{{item}}.sql"
+#   with_items: udr_ports
+#   when: item != udr_ports[0]
