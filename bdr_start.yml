@@ -4,6 +4,5 @@
 
 - hosts: all
   gather_facts: false
-  sudo: false
   roles:
     - bdr_start

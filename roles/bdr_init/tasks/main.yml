@@ -34,7 +34,7 @@
 - include: bdr_db_start.yml
 
 - name: Create databases
-  postgresql_db: login_host=localhost port={{item}} login_user={{db_superuser}} name={{db_name}} state=present
+  postgresql_db: login_host="localhost" port="{{item}}" login_user="{{db_superuser}}" name="{{db_name}}" state="present"
   with_items: bdr_ports
 
   # Server version number is used to set version-specific parameters in the
