@@ -69,9 +69,10 @@
 
 - name: Create BDR group
   shell: "{{bdr_bin}}/psql -U {{db_superuser}} -d {{db_name}} -p {{bdr_ports[0]}} -f /tmp/bdr_group_create.sql"
+  when: execute_bdr_group|bool == true
 
 - name: Add other nodes to group
   shell: "{{bdr_bin}}/psql -U {{db_superuser}} -d {{db_name}} -p {{item}} -f /tmp/bdr_group_join.{{item}}.sql"
   with_items:
     - "{{bdr_ports}}"
-  when: item != bdr_ports[0]
+  when: (execute_bdr_group|bool == true) and (item != bdr_ports[0])
