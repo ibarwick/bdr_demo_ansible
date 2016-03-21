@@ -1,0 +1,20 @@
+---
+
+# common/defaults/main.yml
+
+db_superuser: postgres
+db_name: bdrdemo
+base_data_dir: "/tmp"
+base_log_dir: "/tmp"
+ansible_connection: local
+extra_connections: 5
+
+execute_bdr_group: true
+replication_sets: ""
+
+bdr_replica_src: 5597
+
+bdr_ports:
+  - 5597
+  - 5598
+  - 5599

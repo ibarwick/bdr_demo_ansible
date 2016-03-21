@@ -1,6 +1,0 @@
----
-
-# roles/bdr_init/defaults/main.yml
-
-execute_bdr_group: true
-replication_sets: ""
