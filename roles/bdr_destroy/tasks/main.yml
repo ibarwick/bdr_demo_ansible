@@ -7,7 +7,21 @@
 - include: bdr_db_stop.yml
 
 - name: Delete data directories
-  shell: rm -rf "{{base_data_dir}}/BDR{{item}}/"
+  file:
+    path="{{base_data_dir}}/BDR{{item}}/"
+    state=absent
   with_items:
     - "{{bdr_ports}}"
 
+- name: Delete SQL to create BDR group
+  file:
+    path="/tmp/bdr_group_create.sql"
+    state=absent
+
+- name: Delete SQL to add other nodes
+  file:
+    path="/tmp/bdr_group_join.{{item}}.sql"
+    state=absent
+  with_items:
+    - "{{bdr_ports}}"
+  when: item != bdr_ports[0]
