@@ -11,9 +11,10 @@ Requirements
 
 - Ansible ( http://www.ansible.com/ )
 - psycopg2
-- BDR-enabled PostgreSQL ( http://wiki.postgresql.org/wiki/BDR_Quick_Start#Installing_the_patched_PostgreSQL_binaries )
+- BDR-enabled PostgreSQL ( http://bdr-project.org/docs/stable/quickstart.html )
   Note: `bdr_demo_ansible` will not build a BDR-enabled PostgreSQL;
-  see the above link for details on how to do this.
+  see http://bdr-project.org/docs/stable/installation-source.html for details
+  on how to do this.
 
 
 BDR Configuration
