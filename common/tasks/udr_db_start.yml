@@ -1,10 +1,9 @@
-
 ---
 
 # udr_db_start.yml
 
 - name: Start servers
-  shell: "{{udr_bin}}/pg_ctl -D {{base_data_dir}}/UDR{{item}} -l {{base_log_dir}}/udr{{item}}.log -w start"
+  shell: "{{udr_bin}}/pg_ctl -D {{base_data_dir}}/UDR{{item}} -l {{base_log_dir}}/udr.{{item}}.log -w start"
   args:
     creates: "{{base_data_dir}}/UDR{{item}}/postmaster.pid"
   with_items:
