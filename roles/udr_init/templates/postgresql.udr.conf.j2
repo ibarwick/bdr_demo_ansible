@@ -26,5 +26,5 @@ max_worker_processes = {{udr_ports|count + 1 + extra_connections}}
 # Set up debugging output
 log_error_verbosity = verbose
 log_min_messages = debug1
-log_line_prefix = 'd=%d p=%p a=%a%q '
+log_line_prefix = '[%t] d=%d p=%p a=%a%q '
 
