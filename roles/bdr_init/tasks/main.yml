@@ -49,7 +49,7 @@
   # configuration files
   # (NOTE: not currently used anywhere)
 - name: Extract server version number
-  shell: "{{bdr_bin}}/psql -A -q -t -U {{db_superuser}} -d {{db_name}} -h localhost -p {{bdr_ports[0]}} -c 'SHOW SERVER_VERSION_NUM'"
+  shell: "{{bdr_bin}}/psql -X -A -q -t -U {{db_superuser}} -d {{db_name}} -h localhost -p {{bdr_ports[0]}} -c 'SHOW SERVER_VERSION_NUM'"
   register: server_version_num
 
 - name: Create required extensions
